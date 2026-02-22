@@ -1,5 +1,5 @@
 import collections
-from matplotlib.pyplot import figure, show
+import matplotlib.pyplot as plt
 from math import log
 
 
@@ -10,7 +10,7 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
               show_markers=True):
 
     # print data
-    fig = figure(1)
+    fig = plt.figure(1)
 
     num = 0
     if oneplot == True:
@@ -26,6 +26,7 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
 
     colors = ['r', 'b', 'g', 'c', 'm', 'y']
     markers = ['s', 'o', 'x', '^', 'v', '<', '>']
+    lines = ['-', '--', ':', '-.']
 
     ax = fig.add_subplot(num, 1, 1)
     ax.grid(True)
@@ -47,13 +48,13 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
             xs = [(x > 0 and log(x, 10) or 0) for x in od_points.keys()]
             ys = [(y > 0 and log(y, 10) or 0) for y in od_points.values()]
         else:
-            xs = od_points.keys()
-            ys = od_points.values()
+            xs = list(od_points.keys())
+            ys = list(od_points.values())
 
-        xs.insert(0, 0)
+        xs = [0] + xs
         x_max = max(x_max, max(xs))
 
-        ys.insert(0, 0)
+        ys = [0] + ys
         y_max = max(y_max, max(ys))
 
         line = colors[i % labels_num] + '-'
@@ -93,13 +94,13 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
                     xs = [(x > 0 and log(x, 10) or 0) for x in od_points.keys()]
                     ys = [(y > 0 and log(y, 10) or 0) for y in od_points.values()]
                 else:
-                    xs = od_points.keys()
-                    ys = od_points.values()
+                    xs = list(od_points.keys())
+                    ys = list(od_points.values())
 
-                xs.insert(0, 0)
+                xs = [0] + xs
                 x_max = max(x_max, max(xs))
 
-                ys.insert(0, 0)
+                ys = [0] + ys
                 y_max = max(y_max, max(ys))
 
                 line = colors[j % sort_num] + lines[i % num]
@@ -118,4 +119,4 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
         ax.set_ylim((0, y_max * 1.1))
         ax.legend(line_titles, loc=legend2_pos)
 
-    show()
+    plt.show()
