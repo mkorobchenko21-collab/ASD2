@@ -3,32 +3,24 @@ import matplotlib.pyplot as plt
 from math import log
 
 
-def plot_data(data, logarithmic=False, oneplot=False, data_2={},
-              label_data2_label=True,
-              data_label='', data2_label='',
-              legend_pos=0, legend2_pos=0,
-              show_markers=True):
+def plot_data(
+    data: dict,
+    logarithmic: bool = False,
+    data_label: str = "",
+    onePlot: bool = False,
+    show_markers: bool = True,
+) -> None:
 
     # print data
     fig = plt.figure(1)
 
-    num = 0
-    if oneplot == True:
-        num = 1
+    numSubplots = 1 if onePlot else len(data)
 
-    if len(data_2) > 0:
-        num += 1
-    else:
-        num = len(data)
+    colors = ["r", "b", "g", "c", "m", "y"]
+    markers = ["s", "o", "x", "^", "v", "<", ">"]
+    lines = ["-", "--", ":", "-."]  # added by myself
 
-    if len(data_2) > 0:
-        num += 1
-
-    colors = ['r', 'b', 'g', 'c', 'm', 'y']
-    markers = ['s', 'o', 'x', '^', 'v', '<', '>']
-    lines = ['-', '--', ':', '-.']
-
-    ax = fig.add_subplot(num, 1, 1)
+    ax = fig.add_subplot(numSubplots, 1, 1)
     ax.grid(True)
 
     if data_label:
@@ -39,7 +31,7 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
     x_max = y_max = 0
     labels_num = len(data)
 
-    for label, points in data.iteritems():
+    for label, points in data.items():
         i += 1
 
         od_points = collections.OrderedDict(sorted(points.items()))
@@ -57,7 +49,7 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
         ys = [0] + ys
         y_max = max(y_max, max(ys))
 
-        line = colors[i % labels_num] + '-'
+        line = colors[i % labels_num] + "-"
 
         if show_markers:
             line += markers[i % labels_num]
@@ -80,12 +72,12 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
         line_titles = []
         x_max = y_max = 0
 
-        for label, value in data_2.iteritems():
+        for label, value in data_2.items():
             i += 1
             j = -1
             sort_num = len(value)
 
-            for name, points in value.iteritems():
+            for name, points in value.items():
                 j += 1
 
                 od_points = collections.OrderedDict(sorted(points.items()))
@@ -111,7 +103,7 @@ def plot_data(data, logarithmic=False, oneplot=False, data_2={},
                 ax.plot(xs, ys, line)
 
                 if label_data2_label:
-                    line_titles.append(name + ' ' + label)
+                    line_titles.append(name + " " + label)
                 else:
                     line_titles.append(name)
 
