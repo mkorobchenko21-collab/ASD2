@@ -5,14 +5,15 @@ import math
 
 
 def genArr(size, genType = "random"):
-    if genType == "best":
-        a = [i for i in range(1, size)]
-    elif genType == "worst":
-        a = [i for i in reversed(range(1, size))]
-    else:
-        a = [random.randint(1, size) for _ in range(1, size)]
-
-    return a
+    match genType:
+        case 'best':
+            return [i for i in range(1, size)]
+        case "worst":
+            return [i for i in reversed(range(1, size))]
+        case "random":
+            return [random.randint(1, size) for _ in range(1, size)]
+        case "randomUniq":
+            return random.shuffle([i for i in range(1, size)])
 
 def bubbleSort(arr):
     size = len(arr)
