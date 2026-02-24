@@ -1,6 +1,7 @@
 import random
-from plotData2 import plot_data
+import classes
 import math
+# from plotData import plot_data
 
 
 def genArr(size: int, genType: str = "random") -> list:
@@ -15,6 +16,24 @@ def genArr(size: int, genType: str = "random") -> list:
             arr = [i for i in range(1, size + 1)]
             random.shuffle(arr)
             return arr
+
+
+def print_result(results: list["classes.SortResult"]):
+    old_size = None
+    old_algo = None
+    for r in results:
+        current_size = r.size
+        if current_size != old_size:
+            print(f"Size: {current_size}")
+
+        current_algo = r.algorithm
+        if current_algo != old_algo:
+            print(f"\t{r.algorithm} sort:")
+
+        print(f"\t\tType: {r.data_type:<10}\t{r.operations:>10,}")
+
+        old_size = current_size
+        old_algo = current_algo
 
 
 def bubbleSort(arr: list) -> int:
@@ -86,45 +105,31 @@ if __name__ == "__main__":
     # TESTS
     #
 
-    sizes = [10, 100, 1000]
-    typesArrayTest = ["random", "randomUniq", "best", "worst"]
+    algorithms = [
+        classes.SortAlgorithm(name="bubble", func=bubbleSort),
+        classes.SortAlgorithm(name="bubbleImproved", func=bubbleImprovedSort),
+        classes.SortAlgorithm(name="shell", func=shellSort),
+    ]
 
-    dataPlot = {
-        "random": {"bubble": {}, "bubbleImproved": {}, "shell": {}},
-        "randomUniq": {"bubble": {}, "bubbleImproved": {}, "shell": {}},
-        "best": {"bubble": {}, "bubbleImproved": {}, "shell": {}},
-        "worst": {"bubble": {}, "bubbleImproved": {}, "shell": {}},
+    Experiment = classes.SortExperiment(
+        sizes=[10, 100, 1000],
+        data_types=["random", "randomUniq", "best", "worst"],
+        algorithms=algorithms,
+    )
+
+    Experiment.run()
+
+    algo_order = {
+        "bubble": 0,
+        "bubbleImproved": 1,
+        "shell": 2,
     }
 
-    for sizeTestArray in sizes:
-        print("\nDATA SIZE: ", sizeTestArray)
+    sorted_results = sorted(
+        Experiment.results, key=lambda r: (r.size, algo_order[r.algorithm])
+    )
 
-        for genType in typesArrayTest:
-            print("\n\tDATA TYPE:", genType)
+    print_result(sorted_results)
 
-            testArray = genArr(sizeTestArray, genType)
-
-            # Bubble sort test
-            testArrayBubble = testArray.copy()
-            operationCountBubble = bubbleSort(testArrayBubble)
-            print("\tBubble sort operation count:", int(operationCountBubble))
-            dataPlot[genType]["bubble"][sizeTestArray] = operationCountBubble
-
-            # Bubble sort improved
-            testArrayBubbleImproved = testArray.copy()
-            operationCountBubbleImproved = bubbleImprovedSort(testArrayBubbleImproved)
-            print(
-                "\tImproved bubble sort operation count:",
-                int(operationCountBubbleImproved),
-            )
-            dataPlot[genType]["bubbleImproved"][sizeTestArray] = (
-                operationCountBubbleImproved
-            )
-
-            # Shell sort
-            testArrayShell = testArray.copy()
-            operationCountShell = shellSort(testArrayShell)
-            print("\tShell sort operation count:", int(operationCountShell))
-            dataPlot[genType]["shell"][sizeTestArray] = operationCountShell
-
-    plot_data(dataPlot, logarithmic=True, oneplot=True)
+    # plot_data(experiment.results)
+    # plot_data(dataPlot, logarithmic=True, oneplot=True)
