@@ -1,5 +1,5 @@
 from typing import Callable
-from main import genArr
+from main import gen_arr
 
 
 class SortAlgorithm:
@@ -13,7 +13,6 @@ class SortAlgorithm:
         return operations
 
 
-# ?
 class SortResult:
     def __init__(self, size: int, data_type: str, algorithm: str, operations: int):
         self.size = size
@@ -34,7 +33,7 @@ class SortExperiment:
     def run(self):
         for size in self.sizes:
             for data_type in self.data_types:
-                base_array = genArr(size, data_type)
+                base_array = gen_arr(size, data_type)
 
                 for algo in self.algorithms:
                     operations = algo.run_sort(base_array)
