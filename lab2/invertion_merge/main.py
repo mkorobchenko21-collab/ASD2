@@ -107,7 +107,7 @@ def main():
         PATH_IN = Path(sys.argv[1])
 
         PATH_OUT = get_name_output_file(PATH_IN)
-        total_users, total_films, data = load_movie_data(PATH_IN)
+        _, _, data = load_movie_data(PATH_IN)
 
         if target_user_id not in data:
             raise SystemExit(f"Error: user with id {target_user_id} was not found")
