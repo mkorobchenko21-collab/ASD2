@@ -66,9 +66,9 @@ def load_movie_data(filepath: Path):
 
 def get_name_output_file(path_in: Path):
     if not path_in.suffix:
-        path_out = path_in.with_name((f"{path_in}_out.txt"))
+        path_out = f"{path_in.name}_out.txt"
     else:
-        path_out = path_in.with_name(f"{path_in.stem}_out{path_in.suffix}")
+        path_out = f"{path_in.stem}_out{path_in.suffix}"
 
     return path_out
 
@@ -85,6 +85,8 @@ def main():
 
     if not PATH_IN.is_file():
         raise SystemExit(f"Error: file {PATH_IN} was not found")
+
+    PATH_OUT = get_name_output_file(PATH_IN)
 
     # TODO: finish logic of the program
     try:
@@ -120,9 +122,15 @@ def main():
 
         comparison_results.sort(key=lambda x: x[1])
 
-        print(f"{target_user_id}")
-        for res in comparison_results:
-            print(f"{res[0]} {res[1]}")
+        with open(PATH_OUT, "w", encoding="utf-8") as file:
+            print(f"{target_user_id}")
+            file.write(f"{target_user_id}\n")
+
+            for res in comparison_results:
+                print(f"{res[0]} {res[1]}")
+                file.write(f"{res[0]} {res[1]}\n")
+
+        print(f"\nResults were saved to '{PATH_OUT}'")
 
     except Exception as e:
         raise SystemExit(f"Error ocurred while running program:\n{e}")
