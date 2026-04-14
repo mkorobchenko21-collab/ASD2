@@ -3,3 +3,4 @@ __pycache__/
 *.pdf
 !README.md
 _materials
+*_out.*
