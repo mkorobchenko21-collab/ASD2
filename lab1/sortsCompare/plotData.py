@@ -1,114 +1,62 @@
-import collections
 import matplotlib.pyplot as plt
-from math import log
+from collections import defaultdict
+
+from math import log10
 
 
-def plot_data(
-    data: dict,
-    logarithmic: bool = False,
-    data_label: str = "",
-    onePlot: bool = False,
-    show_markers: bool = True,
-) -> None:
+class DataPlotter:
+    def __init__(self, results: list["SortResult"]):
 
-    # print data
-    fig = plt.figure(1)
+        self.results = results
 
-    numSubplots = 1 if onePlot else len(data)
+    def _group(self):
+        """
 
-    colors = ["r", "b", "g", "c", "m", "y"]
-    markers = ["s", "o", "x", "^", "v", "<", ">"]
-    lines = ["-", "--", ":", "-."]  # added by myself
+        data[data_type][algorithm][size] = operations
 
-    ax = fig.add_subplot(numSubplots, 1, 1)
-    ax.grid(True)
+        """
 
-    if data_label:
-        ax.set_title(data_label)
+        data = defaultdict(lambda: defaultdict(dict))
 
-    i = -1
-    line_titles = []
-    x_max = y_max = 0
-    labels_num = len(data)
+        for r in self.results:
+            data[r.data_type][r.algorithm][r.size] = r.operations
 
-    for label, points in data.items():
-        i += 1
+        return data
 
-        od_points = collections.OrderedDict(sorted(points.items()))
+    def plot(self, logarithmic: bool = False, one_plot: bool = False):
 
-        if logarithmic:
-            xs = [(x > 0 and log(x, 10) or 0) for x in od_points.keys()]
-            ys = [(y > 0 and log(y, 10) or 0) for y in od_points.values()]
-        else:
-            xs = list(od_points.keys())
-            ys = list(od_points.values())
+        grouped = self._group()
 
-        xs = [0] + xs
-        x_max = max(x_max, max(xs))
+        num_plots = 1 if one_plot else len(grouped)
 
-        ys = [0] + ys
-        y_max = max(y_max, max(ys))
+        fig, axes = plt.subplots(num_plots, 1, figsize=(8, 5 * num_plots))
 
-        line = colors[i % labels_num] + "-"
+        if num_plots == 1:
+            axes = [axes]
 
-        if show_markers:
-            line += markers[i % labels_num]
+        for ax, (data_type, algos) in zip(axes, grouped.items()):
+            for algo, points in algos.items():
+                sizes = sorted(points.keys())
 
-        ax.plot(xs, ys, line, label=label)
-        line_titles.append(label)
-
-    ax.set_xlim((0, x_max * 1.1))
-    ax.set_ylim((0, y_max * 1.1))
-    ax.legend(line_titles, loc=legend_pos)
-
-    if len(data_2) > 0:
-        ax = fig.add_subplot(num, 1, num)
-        ax.grid(True)
-
-        if data2_label:
-            ax.set_title(data2_label)
-
-        i = -1
-        line_titles = []
-        x_max = y_max = 0
-
-        for label, value in data_2.items():
-            i += 1
-            j = -1
-            sort_num = len(value)
-
-            for name, points in value.items():
-                j += 1
-
-                od_points = collections.OrderedDict(sorted(points.items()))
+                ops = [points[s] for s in sizes]
 
                 if logarithmic:
-                    xs = [(x > 0 and log(x, 10) or 0) for x in od_points.keys()]
-                    ys = [(y > 0 and log(y, 10) or 0) for y in od_points.values()]
-                else:
-                    xs = list(od_points.keys())
-                    ys = list(od_points.values())
+                    sizes = [log10(x) for x in sizes]
 
-                xs = [0] + xs
-                x_max = max(x_max, max(xs))
+                    ops = [log10(y) for y in ops]
 
-                ys = [0] + ys
-                y_max = max(y_max, max(ys))
+                ax.plot(sizes, ops, marker="o", label=algo)
 
-                line = colors[j % sort_num] + lines[i % num]
+            ax.set_title(f"Data type: {data_type}")
 
-                if show_markers:
-                    line += markers[j % sort_num]
+            ax.set_xlabel("Size")
 
-                ax.plot(xs, ys, line)
+            ax.set_ylabel("Operations")
 
-                if label_data2_label:
-                    line_titles.append(name + " " + label)
-                else:
-                    line_titles.append(name)
+            ax.grid(True)
 
-        ax.set_xlim((0, x_max * 1.1))
-        ax.set_ylim((0, y_max * 1.1))
-        ax.legend(line_titles, loc=legend2_pos)
+            ax.legend()
 
-    plt.show()
+        plt.tight_layout()
+
+        plt.show()

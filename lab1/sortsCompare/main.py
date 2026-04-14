@@ -1,7 +1,7 @@
 import random
 import classes
 import math
-# from plotData import plot_data
+from plotData import DataPlotter
 
 
 def gen_arr(size: int, gen_type: str = "random") -> list:
@@ -12,8 +12,6 @@ def gen_arr(size: int, gen_type: str = "random") -> list:
         case "worst":
             return [i for i in reversed(range(1, size + 1))]
         case "random":
-            return [random.randint(1, size) for _ in range(1, size + 1)]
-        case "randomUniq":
             arr = [i for i in range(1, size + 1)]
             random.shuffle(arr)
             return arr
@@ -41,12 +39,10 @@ def print_result(results: list["classes.SortResult"]):
         Size: 10
             bubble sort:
                     Type: random                    45
-                    Type: randomUniq                45
                     Type: best                      45
                     Type: worst                     45
             bubbleImproved sort:
                     Type: random                    44
-                    Type: randomUniq                42
                     ...
     """
 
@@ -98,7 +94,7 @@ def bubble_improved_sort(arr: list) -> int:
 
 
 def shell_sort(arr: list) -> int:  # using Tokuda gap
-    def ge_tokuda_geps(n: int) -> list:
+    def get_tokuda_geps(n: int) -> list:
         gaps = []
         k = 1
         # while this new counted gap <= n
@@ -110,7 +106,7 @@ def shell_sort(arr: list) -> int:  # using Tokuda gap
 
     size = len(arr)
     operation_count = 0
-    gaps = ge_tokuda_geps(size)
+    gaps = get_tokuda_geps(size)
 
     for gap in gaps:
         for i in range(gap, size):
@@ -142,8 +138,8 @@ if __name__ == "__main__":
     ]
 
     Experiment = classes.SortExperiment(
-        sizes=[10, 100, 1000],
-        data_types=["random", "randomUniq", "best", "worst"],
+        sizes=[10, 100, 1000, 2000, 3000, 4000, 5000],
+        data_types=["random", "best", "worst"],
         algorithms=algorithms,
     )
 
@@ -153,4 +149,5 @@ if __name__ == "__main__":
 
     print_result(sorted_results)
 
-    # plot_data(experiment.results)
+    plotter = DataPlotter(Experiment.results)
+    plotter.plot(logarithmic=True, one_plot=False)
