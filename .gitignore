@@ -1,0 +1,5 @@
+__pycache__/
+*.md
+*.pdf
+!README.md
+_materials
