@@ -34,65 +34,80 @@ def sort_and_count_inversions(arr: list):
         return arr, x + y + z
 
 
-def validate_input_file(filepath: Path): ...
-
-
 def load_movie_data(filepath: Path):
-    users_data = {}
+    try:
+        users_data = {}
 
-    with open(filepath, "r", encoding="utf-8") as file:
-        validate_input_file(filepath)
+        if not filepath.is_file():
+            raise FileNotFoundError(f"Error: file {filepath} was not found")
 
-        first_line = file.readline().split()
-        if len(first_line) != 2:
-            raise SystemExit("Error: first line of file must contain only 2 values")
+        with open(filepath, "r", encoding="utf-8") as file:
+            first_line = file.readline().split()
+            if len(first_line) != 2:
+                raise ValueError("Error: first line of file must contain only 2 values")
 
-        user_number, films_number = map(int, first_line)
+            users_total, films_total = map(int, first_line)
 
-        for line in file:
-            line = line.strip()
-            if not line:
-                continue
+            count_users = 0
 
-            row_data = list(map(int, line.split()))
+            for line in file:
+                line = line.strip()
+                if not line:
+                    continue
 
-            user_id = row_data[0]
-            ratings = row_data[1:]
+                count_users += 1
 
-            users_data[user_id] = ratings
+                line_array = line.split()
+                row_data = list(map(int, line.split()))
 
-        return user_number, films_number, users_data
+                user_id = row_data[0]
+                ratings = row_data[1:]
+
+                users_data[user_id] = ratings
+
+                if len(line_array) != films_total + 1:
+                    raise ValueError(
+                        f"Error: each line of file must contain {films_total} ratings and user id"
+                    )
+
+            if count_users != users_total:
+                raise ValueError(
+                    f"Error: number of users in file is not equal to {users_total}"
+                )
+    except Exception as e:
+        raise SystemExit(f"Error ocurred while loading data from file:\n{e}")
+
+    return users_total, films_total, users_data
 
 
 def get_name_output_file(path_in: Path):
     if not path_in.suffix:
-        path_out = f"{path_in.name}_out.txt"
-    else:
-        path_out = f"{path_in.stem}_out{path_in.suffix}"
-
-    return path_out
+        return path_in.with_name(f"{path_in.name}_out.txt")
+    return path_in.with_name(f"{path_in.stem}_out{path_in.suffix}")
 
 
 def main():
-    # TODO: improve errors raising
-    if len(sys.argv) != 2:
-        raise SystemExit(
-            "Error: Wrong usage of arguments\n  \
-            Usage: python3 main.py [path/to/file]\n"
-        )
+    while True:
+        try:
+            target_user_id = int(input("Enter user id for comparison: "))
 
-    PATH_IN = Path(sys.argv[1])
+        except ValueError:
+            print("Error: user id must be an integer\n")
+            continue
 
-    if not PATH_IN.is_file():
-        raise SystemExit(f"Error: file {PATH_IN} was not found")
+        break
 
-    PATH_OUT = get_name_output_file(PATH_IN)
-
-    # TODO: finish logic of the program
     try:
-        total_users, total_films, data = load_movie_data(PATH_IN)
+        if len(sys.argv) != 2:
+            raise ValueError(
+                "Error: Wrong usage of arguments\n  \
+            Usage: python3 main.py [path/to/file]\n"
+            )
 
-        target_user_id = int(input("Enter user id for comparison: "))
+        PATH_IN = Path(sys.argv[1])
+
+        PATH_OUT = get_name_output_file(PATH_IN)
+        total_users, total_films, data = load_movie_data(PATH_IN)
 
         if target_user_id not in data:
             raise SystemExit(f"Error: user with id {target_user_id} was not found")
