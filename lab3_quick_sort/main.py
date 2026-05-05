@@ -1,24 +1,22 @@
 import sys
 from pathlib import Path
+import quick_sorts
 
 
 def load_file(filepath: Path) -> tuple[int, list]:
-    try:
-        if not filepath.is_file():
-            raise FileNotFoundError(f"Error: file {filepath} was not found")
+    if not filepath.is_file():
+        raise FileNotFoundError(f"Error: file {filepath} was not found")
 
-        with open(filepath, "r", encoding="utf-8") as file:
-            size_array = int(file.readline())
-            if size_array != 1:
-                raise ValueError("Error: first line of file must contain only 1 value")
+    with open(filepath, "r", encoding="utf-8") as file:
+        size_array = int(file.readline().strip())
 
-            array = []
+        if size_array <= 0:
+            raise ValueError("Error: first line of file must contain only 1 value")
 
-            for _ in range(size_array):
-                array.append(int(file.readline()))
+        array = []
 
-    except Exception as e:
-        raise SystemExit(f"Error ocurred while loading data from file:\n{e}")
+        for _ in range(size_array):
+            array.append(int(file.readline()))
 
     return size_array, array
 
