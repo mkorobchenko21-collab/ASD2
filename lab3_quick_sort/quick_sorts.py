@@ -2,23 +2,29 @@ import random
 
 
 def quick_sort_1(arr: list[int]) -> int:
+    # Standard QuickSort implementation using the Lomuto partition scheme
     count = 0
 
     def partition(A, p, r):
         nonlocal count
-        x = A[r]
+        x = A[r]  # Choose the last element as the pivot
         i = p - 1
+
+        # Rearrange elements so that those smaller than or equal to pivot are on the left
         for j in range(p, r):
             count += 1
             if A[j] <= x:
                 i += 1
                 A[i], A[j] = A[j], A[i]
+
+        # Place the pivot in its correct sorted position
         A[i + 1], A[r] = A[r], A[i + 1]
         return i + 1
 
     def qs(A, p, r):
         if p < r:
             q = partition(A, p, r)
+            # Recursively sort the left and right subarrays
             qs(A, p, q - 1)
             qs(A, q + 1, r)
 
@@ -29,6 +35,7 @@ def quick_sort_1(arr: list[int]) -> int:
 
 
 def randomized_quick_sort(arr: list[int]) -> int:
+    # QuickSort with randomized pivot selection to avoid worst-case time complexity
     count = 0
 
     def partition(A, p, r):
@@ -44,7 +51,7 @@ def randomized_quick_sort(arr: list[int]) -> int:
         return i + 1
 
     def randomized_partition(A, p, r):
-        # Випадковий вибір опорного елементу
+        # Select a random index for the pivot and swap it with the last element
         i = random.randint(p, r)
         A[r], A[i] = A[i], A[r]
         return partition(A, p, r)
@@ -62,12 +69,11 @@ def randomized_quick_sort(arr: list[int]) -> int:
 
 
 def quick_sort_3_pivot(arr: list[int]) -> int:
-    """
-    Алгоритм 3. Швидке сортування з 3 опорними елементами.
-    """
+    # 3-Pivot QuickSort implementation dividing the array into 4 segments
     count = 0
 
     def insertion_sort(A, p, r):
+        # Fallback sorting algorithm for very small subarrays
         nonlocal count
         for j in range(p + 1, r + 1):
             key = A[j]
@@ -87,12 +93,14 @@ def quick_sort_3_pivot(arr: list[int]) -> int:
         b = left + 2
         c = right - 1
         d = right - 1
+
+        # Three pivots required for 4-way partitioning
         p_val = A[left]
         q_val = A[left + 1]
         r_val = A[right]
 
+        # Partitioning loop: group elements into 4 regions based on the 3 pivots
         while b <= c:
-            # Розбиваємо while на умову та break, щоб правильно рахувати порівняння
             while b <= c:
                 count += 1
                 if A[b] < q_val:
@@ -145,6 +153,7 @@ def quick_sort_3_pivot(arr: list[int]) -> int:
         c += 1
         d += 1
 
+        # Move the pivots to their final sorted positions
         A[left + 1], A[a] = A[a], A[left + 1]
         A[a], A[b] = A[b], A[a]
         a -= 1
@@ -156,19 +165,22 @@ def quick_sort_3_pivot(arr: list[int]) -> int:
 
     def qs(A, p, r):
         n = r - p + 1
+
+        # Use Insertion Sort for subarrays with 3 or fewer elements
         if n <= 3:
             if n > 1:
                 insertion_sort(A, p, r)
             return
 
-        # Впорядковуємо 3 опорні елементи: A[p], A[p+1], A[r]
-        # За вимогами методички, порівняння тут НЕ йдуть у загальний лічильник!
+        # Ensure the 3 pivots are sorted before partitioning
         vals = [A[p], A[p + 1], A[r]]
         vals.sort()
-        A[p], A[p + 1], A[r] = vals, vals[1], vals[2]
+        A[p], A[p + 1], A[r] = vals[0], vals[1], vals[2]
 
+        # Get the final indices of the 3 pivots
         idx1, idx2, idx3 = partition_3pivot(A, p, r)
 
+        # Recursively sort the 4 partitions
         qs(A, p, idx1 - 1)
         qs(A, idx1 + 1, idx2 - 1)
         qs(A, idx2 + 1, idx3 - 1)
