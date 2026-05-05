@@ -8,18 +8,13 @@ def plot_sort_results(
 
     num_plots = 1 if one_plot else len(data_dict)
 
-    # Створюємо графіки
     fig, axes = plt.subplots(num_plots, 1, figsize=(8, 5 * num_plots))
 
-    # Якщо графік лише один, plt.subplots повертає об'єкт, а не список. Робимо його списком.
     if num_plots == 1:
         axes = [axes]
 
-    # Проходимося по типах даних (один тип = один графік)
     for ax, (data_type, algos) in zip(axes, data_dict.items()):
-        # Проходимося по алгоритмах
         for algo, points in algos.items():
-            # Сортуємо розміри, щоб лінія йшла зліва направо
             sizes = sorted(points.keys())
             ops = [points[s] for s in sizes]
 
@@ -29,10 +24,8 @@ def plot_sort_results(
 
             ax.plot(sizes, ops, marker="o", label=algo)
 
-        # Налаштування вигляду поточного графіка
         ax.set_title(f"Data type: {data_type}")
 
-        # Динамічні підписи осей
         ax.set_xlabel("Log10(Size)" if logarithmic else "Size")
         ax.set_ylabel("Log10(Operations)" if logarithmic else "Operations")
 
