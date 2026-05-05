@@ -123,7 +123,6 @@ def main():
         # writing results to output file
         try:
             with open(path_out, "w", encoding="utf-8") as file:
-                # Записуємо результати в один рядок через пробіл (як вимагалося у лабі)
                 file.write(f"{ops_qs_1} {ops_qs_rand} {ops_qs_3pivot}\n")
 
             print(f"\nResults were saved to '{path_out}'")
